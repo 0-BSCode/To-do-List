@@ -1,24 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { TextField, Button, Typography } from "@mui/material";
+import { useState, useEffect } from "react";
+import { collection, getDocs, addDoc, doc } from "firebase/firestore";
+import { db, auth } from "./firebase-config";
 
 function App() {
+  const [text, setText] = useState("");
+  const [notes, setNotes] = useState([]);
+  const notesCollectionRef = collection(db, "notes");
+
+  const saveText = async (e) => {
+    e.preventDefault();
+
+    const newNote = await addDoc(notesCollectionRef, { text });
+    console.log(newNote);
+    setText("");
+  };
+
+  useEffect(() => {
+    const getNotes = async () => {
+      const data = await getDocs(notesCollectionRef);
+      setNotes(data.docs.map((doc) => ({ ...doc.data() })));
+    };
+
+    getNotes();
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <TextField
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+        }}
+      />
+
+      <Button variant={"outlined"} onClick={(e) => saveText(e)}>
+        Submit
+      </Button>
+
+      {notes.map((note) => {
+        return <Typography variant="p">{note.text}</Typography>;
+      })}
+    </>
   );
 }
 
