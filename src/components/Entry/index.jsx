@@ -1,17 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
-import { addDoc, serverTimestamp } from "firebase/firestore";
-import { auth } from "../../firebase-config";
+import { db, auth } from "../../firebase-config";
 import { signOut } from "firebase/auth";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  serverTimestamp,
+  where,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
 
-const Entry = ({ notes, collectionRef }) => {
+const Entry = () => {
   const [text, setText] = useState("");
+  const [notes, setNotes] = useState([]);
+  const notesCollectionRef = collection(db, "notes");
+
+  console.log(auth.currentUser.uid);
+  const notesQuery = query(
+    notesCollectionRef,
+    where("createdBy", "==", auth.currentUser.uid)
+  );
+
+  useEffect(() => {
+    const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
+      const notes = [];
+      snapshot.docs.forEach((doc) => {
+        notes.push({ ...doc.data(), id: doc.id });
+      });
+
+      setNotes(notes);
+    });
+  }, []);
 
   const saveText = async (e) => {
     e.preventDefault();
 
     if (text !== "") {
-      await addDoc(collectionRef, {
+      await addDoc(notesCollectionRef, {
         text,
         createdAt: serverTimestamp(),
         createdBy: auth.currentUser.uid,

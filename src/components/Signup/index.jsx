@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../firebase-config";
 import { Grid, Paper, TextField, Button } from "@mui/material";
 
 const SignupForm = () => {
-  const auth = getAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
   const createUser = async (e) => {
-    if (email.length && password.length) {
-      await createUserWithEmailAndPassword(auth, email, password);
+    if (signupEmail.length && signupPassword.length) {
+      await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
     }
+  };
+
+  const login = async (e) => {
+    await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
   };
 
   return (
@@ -21,21 +30,22 @@ const SignupForm = () => {
         direction={"column"}
         justify={"center"}
         alignItems={"center"}
+        mt={3}
       >
         <Grid item xs={12}>
           <TextField
             label="Email"
             type={"email"}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={signupEmail}
+            onChange={(e) => setSignupEmail(e.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             label="Password"
             type={"password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={signupPassword}
+            onChange={(e) => setSignupPassword(e.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -45,6 +55,37 @@ const SignupForm = () => {
             onClick={(e) => createUser(e)}
           >
             Sign Up
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Grid
+        container
+        spacing={3}
+        direction={"column"}
+        justify={"center"}
+        alignItems={"center"}
+        mt={3}
+      >
+        <Grid item xs={12}>
+          <TextField
+            label="Email"
+            type={"email"}
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Password"
+            type={"password"}
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button variant={"contained"} fullWidth onClick={(e) => login(e)}>
+            Login
           </Button>
         </Grid>
       </Grid>
