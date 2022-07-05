@@ -1,46 +1,50 @@
-import { TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Typography, Grid } from "@mui/material";
 import { useState, useEffect } from "react";
-import { collection, getDocs, addDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  serverTimestamp,
+  where,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "./firebase-config";
+import SignupForm from "./components/Signup";
+import Entry from "./components/Entry";
 
 function App() {
-  const [text, setText] = useState("");
   const [notes, setNotes] = useState([]);
   const notesCollectionRef = collection(db, "notes");
-
-  const saveText = async (e) => {
-    e.preventDefault();
-
-    const newNote = await addDoc(notesCollectionRef, { text });
-    console.log(newNote);
-    setText("");
-  };
+  const notesQuery = query(notesCollectionRef, orderBy("createdAt", "desc"));
 
   useEffect(() => {
-    const getNotes = async () => {
-      const data = await getDocs(notesCollectionRef);
-      setNotes(data.docs.map((doc) => ({ ...doc.data() })));
-    };
+    const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
+      const notes = [];
+      snapshot.docs.forEach((doc) => {
+        notes.push({ ...doc.data(), id: doc.id });
+      });
 
-    getNotes();
-  });
+      setNotes(notes);
 
+      const unsubAuth = onAuthStateChanged(auth, (user) => {
+        console.log(auth.currentUser);
+      });
+    });
+  }, []);
+
+  console.log(auth.currentUser);
+  console.log(notes);
   return (
     <>
-      <TextField
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value);
-        }}
-      />
-
-      <Button variant={"outlined"} onClick={(e) => saveText(e)}>
-        Submit
-      </Button>
-
-      {notes.map((note) => {
-        return <Typography variant="p">{note.text}</Typography>;
-      })}
+      {auth.currentUser ? (
+        <Entry notes={notes} collectionRef={notesCollectionRef} />
+      ) : (
+        <SignupForm />
+      )}
     </>
   );
 }
