@@ -7,6 +7,7 @@ import {
   IconButton,
   TextField,
   Button,
+  Stack,
 } from "@mui/material";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import EditIcon from "@mui/icons-material/Edit";
@@ -40,11 +41,10 @@ const Note = ({ note }) => {
             <IconButton
               aria-label="Edit"
               onClick={(e) => {
-                console.log(text);
-                setEdit(!edit);
+                setEdit(true);
               }}
             >
-              <EditIcon />
+              <EditIcon data-key={note.id} />
             </IconButton>
             <IconButton aria-label="Delete" onClick={(e) => deleteNote(e)}>
               <DeleteIcon />
@@ -52,12 +52,17 @@ const Note = ({ note }) => {
           </CardActions>
         </>
       ) : (
-        <>
+        <Stack
+          direction={"row"}
+          justifyContent={"center"}
+          sx={{ m: 1.5 }}
+          spacing={1}
+        >
           <TextField value={text} onChange={(e) => setText(e.target.value)} />
           <Button variant={"contained"} onClick={(e) => updateNote(e)}>
             SUBMIT
           </Button>
-        </>
+        </Stack>
       )}
     </Card>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Stack, Paper } from "@mui/material";
 import { db, auth } from "../../firebase-config";
 import { signOut } from "firebase/auth";
 import {
@@ -27,8 +27,6 @@ const Entry = () => {
 
   useEffect(() => {
     const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
-      console.log("SNAPSHOT");
-      console.log(snapshot);
       const notes = [];
       snapshot.docs.forEach((doc) => {
         notes.push({ ...doc.data(), id: doc.id });
@@ -37,11 +35,6 @@ const Entry = () => {
       setNotes(notes);
     });
   }, []);
-
-  useEffect(() => {
-    console.log("Current User: ", auth.currentUser.uid);
-    console.log("Notes: ", notes);
-  });
 
   const saveText = async (e) => {
     e.preventDefault();
@@ -62,34 +55,41 @@ const Entry = () => {
     await signOut(auth);
   };
 
+  console.log(notes);
+
   return (
-    <>
-      <TextField
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value);
-        }}
-      />
-
-      <Button
-        disabled={disable}
-        variant={"contained"}
-        onClick={(e) => saveText(e)}
-      >
-        Submit
-      </Button>
-
-      {notes.length && (
-        <>
-          {notes.map((note) => {
-            return <Note note={note} />;
-          })}
-        </>
-      )}
+    <Stack spacing={2} alignItems={"center"}>
       <Button variant={"outlined"} onClick={(e) => logout(e)}>
         Logout
       </Button>
-    </>
+      <Stack direction={"row"} justifyContent={"center"}>
+        <TextField
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+          }}
+        />
+
+        <Button
+          alignSelf={"center"}
+          disabled={disable}
+          variant={"contained"}
+          onClick={(e) => saveText(e)}
+        >
+          Submit
+        </Button>
+      </Stack>
+
+      <Paper>
+        {notes.length > 0 && (
+          <>
+            {notes.map((note) => {
+              return <Note note={note} />;
+            })}
+          </>
+        )}
+      </Paper>
+    </Stack>
   );
 };
 
