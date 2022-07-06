@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  TextField,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { TextField, Button } from "@mui/material";
 import { db, auth } from "../../firebase-config";
 import { signOut } from "firebase/auth";
 import {
   collection,
-  getDocs,
   addDoc,
-  doc,
   serverTimestamp,
   where,
   onSnapshot,
