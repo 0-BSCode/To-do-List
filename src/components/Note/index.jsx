@@ -21,7 +21,6 @@ const Note = ({ note }) => {
   const updateNote = async (e) => {
     await updateDoc(docRef, {
       text,
-      sortText: text.toLowerCase(),
     });
     setEdit(false);
   };
@@ -35,12 +34,16 @@ const Note = ({ note }) => {
       {!edit ? (
         <>
           <CardContent>
-            <Typography variant={"h4"}>
-              {note.text} | {note.sortText}
-            </Typography>
+            <Typography variant={"h4"}>{note.text}</Typography>
           </CardContent>
           <CardActions>
-            <IconButton aria-label="Edit" onClick={(e) => setEdit(!edit)}>
+            <IconButton
+              aria-label="Edit"
+              onClick={(e) => {
+                console.log(text);
+                setEdit(!edit);
+              }}
+            >
               <EditIcon />
             </IconButton>
             <IconButton aria-label="Delete" onClick={(e) => deleteNote(e)}>

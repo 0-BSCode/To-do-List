@@ -33,16 +33,16 @@ const Entry = () => {
 
   const notesQuery = query(
     notesCollectionRef,
+    orderBy("createdAt", "desc"),
     where("createdBy", "==", auth.currentUser.uid)
-    // orderBy("createdAt")
   );
 
   useEffect(() => {
     const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
       console.log("SNAPSHOT");
+      console.log(snapshot);
       const notes = [];
       snapshot.docs.forEach((doc) => {
-        console.log("DOC: ", { ...doc.data(), id: doc.id });
         notes.push({ ...doc.data(), id: doc.id });
       });
 
@@ -62,7 +62,6 @@ const Entry = () => {
     if (text !== "") {
       await addDoc(notesCollectionRef, {
         text,
-        sortText: text.toLowerCase(),
         createdAt: serverTimestamp(),
         createdBy: auth.currentUser.uid,
       });
