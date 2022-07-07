@@ -11,12 +11,14 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
+import parseTimeForTextField from "../../_utils/parseTimeForTextField";
 import Note from "../Note";
 
 const Entry = () => {
   const [text, setText] = useState("");
   const [notes, setNotes] = useState([]);
   const [disable, setDisable] = useState(false);
+  const [time, setTime] = useState(parseTimeForTextField(new Date(), false));
   const notesCollectionRef = collection(db, "notes");
 
   const notesQuery = query(
@@ -36,8 +38,17 @@ const Entry = () => {
     });
   }, []);
 
+  const handleChange = (e) => {
+    setTime(e.target.value);
+  };
+
   const saveText = async (e) => {
     e.preventDefault();
+
+    const [hours, minutes] = time.split(":");
+    const d = new Date();
+    d.setHours(hours);
+    d.setMinutes(minutes);
 
     await setDisable(true);
     if (text !== "") {
@@ -45,6 +56,8 @@ const Entry = () => {
         text,
         createdAt: serverTimestamp(),
         createdBy: auth.currentUser.uid,
+        dueTime: d,
+        displayTime: parseTimeForTextField(d, true),
       });
       setText("");
     }
@@ -55,8 +68,7 @@ const Entry = () => {
     await signOut(auth);
   };
 
-  console.log(notes);
-
+  // console.log("NOTES", notes);
   return (
     <Stack spacing={2} alignItems={"center"}>
       <Button variant={"outlined"} onClick={(e) => logout(e)}>
@@ -64,12 +76,27 @@ const Entry = () => {
       </Button>
       <Stack direction={"row"} justifyContent={"center"}>
         <TextField
+          label="Reminder"
           value={text}
           onChange={(e) => {
             setText(e.target.value);
           }}
         />
 
+        <TextField
+          id="time"
+          label="Time"
+          type="time"
+          value={time}
+          onChange={(e) => handleChange(e)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          inputProps={{
+            step: 300, // 5 min
+          }}
+          sx={{ width: 150 }}
+        />
         <Button
           alignSelf={"center"}
           disabled={disable}

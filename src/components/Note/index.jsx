@@ -17,6 +17,11 @@ import { db } from "../../firebase-config";
 const Note = ({ note }) => {
   const [edit, setEdit] = useState(false);
   const [text, setText] = useState(note.text);
+  const [time, setTime] = useState(
+    `${String(note.dueTime.toDate().getHours()).padStart(2, "0")}:${String(
+      note.dueTime.toDate().getMinutes()
+    ).padStart(2, "0")}`
+  );
   const docRef = doc(db, "notes", note.id);
 
   const updateNote = async (e) => {
@@ -30,12 +35,16 @@ const Note = ({ note }) => {
     await deleteDoc(docRef);
   };
 
+  // console.log("Text: ", text);
+  // console.log("Due time: ", time);
   return (
     <Card sx={{ maxWidth: 800, mx: "auto", mb: 2 }} variant={"outlined"}>
       {!edit ? (
         <>
           <CardContent>
-            <Typography variant={"h4"}>{note.text}</Typography>
+            <Typography variant={"h4"}>
+              {note.text} | {note.displayTime}
+            </Typography>
           </CardContent>
           <CardActions>
             <IconButton
