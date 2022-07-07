@@ -23,7 +23,7 @@ const Entry = () => {
 
   const notesQuery = query(
     notesCollectionRef,
-    orderBy("createdAt", "desc"),
+    orderBy("dueTime", "asc"),
     where("createdBy", "==", auth.currentUser.uid)
   );
 
@@ -68,7 +68,6 @@ const Entry = () => {
     await signOut(auth);
   };
 
-  // console.log("NOTES", notes);
   return (
     <Stack spacing={2} alignItems={"center"}>
       <Button variant={"outlined"} onClick={(e) => logout(e)}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -9,6 +9,7 @@ import {
   Button,
   Stack,
 } from "@mui/material";
+import parseTimeForTextField from "../../_utils/parseTimeForTextField";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -18,15 +19,23 @@ const Note = ({ note }) => {
   const [edit, setEdit] = useState(false);
   const [text, setText] = useState(note.text);
   const [time, setTime] = useState(
-    `${String(note.dueTime.toDate().getHours()).padStart(2, "0")}:${String(
-      note.dueTime.toDate().getMinutes()
-    ).padStart(2, "0")}`
+    parseTimeForTextField(note.dueTime.toDate(), false)
   );
   const docRef = doc(db, "notes", note.id);
 
+  const handleChange = (e) => {
+    setTime(e.target.value);
+  };
   const updateNote = async (e) => {
+    const [hours, minutes] = time.split(":");
+    const d = new Date();
+    d.setHours(hours);
+    d.setMinutes(minutes);
+
     await updateDoc(docRef, {
       text,
+      dueTime: d,
+      displayTime: parseTimeForTextField(d, true),
     });
     setEdit(false);
   };
@@ -35,8 +44,12 @@ const Note = ({ note }) => {
     await deleteDoc(docRef);
   };
 
-  // console.log("Text: ", text);
-  // console.log("Due time: ", time);
+  useEffect(() => {
+    console.log("Text: ", text);
+    console.log("Parsed time: ", time);
+    console.log("\n");
+  }, [note]);
+
   return (
     <Card sx={{ maxWidth: 800, mx: "auto", mb: 2 }} variant={"outlined"}>
       {!edit ? (
@@ -68,6 +81,21 @@ const Note = ({ note }) => {
           spacing={1}
         >
           <TextField value={text} onChange={(e) => setText(e.target.value)} />
+
+          <TextField
+            id="time"
+            label="Time"
+            type="time"
+            value={time}
+            onChange={(e) => handleChange(e)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+            sx={{ width: 150 }}
+          />
           <Button variant={"contained"} onClick={(e) => updateNote(e)}>
             SUBMIT
           </Button>

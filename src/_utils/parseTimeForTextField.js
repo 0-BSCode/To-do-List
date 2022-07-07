@@ -11,8 +11,6 @@ const parseTimeForTextField = (date, addAMPM) => {
     end = "PM";
     hours -= 12;
   }
-  console.log("HOURS: ", hours);
-  console.log("MINUTES: ", minutes);
   const parsedTime = addAMPM
     ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
         2,
