@@ -15,8 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { db } from "../../firebase-config";
 
-const Note = ({ note }) => {
-  const [edit, setEdit] = useState(false);
+const Note = ({ note, activeNoteId }) => {
   const [text, setText] = useState(note.text);
   const [time, setTime] = useState(
     parseTimeForTextField(note.dueTime.toDate(), false)
@@ -26,6 +25,11 @@ const Note = ({ note }) => {
   const handleChange = (e) => {
     setTime(e.target.value);
   };
+
+  const handleEdit = () => {
+    activeNoteId.set(note.id);
+  };
+
   const updateNote = async (e) => {
     const [hours, minutes] = time.split(":");
     const d = new Date();
@@ -37,22 +41,17 @@ const Note = ({ note }) => {
       dueTime: d,
       displayTime: parseTimeForTextField(d, true),
     });
-    setEdit(false);
+    activeNoteId.set(-1);
   };
 
   const deleteNote = async (e) => {
+    await activeNoteId.set(-1);
     await deleteDoc(docRef);
   };
 
-  useEffect(() => {
-    console.log("Text: ", text);
-    console.log("Parsed time: ", time);
-    console.log("\n");
-  }, [note]);
-
   return (
     <Card sx={{ maxWidth: 800, mx: "auto", mb: 2 }} variant={"outlined"}>
-      {!edit ? (
+      {note.id !== activeNoteId.get ? (
         <>
           <CardContent>
             <Typography variant={"h4"}>
@@ -60,12 +59,7 @@ const Note = ({ note }) => {
             </Typography>
           </CardContent>
           <CardActions>
-            <IconButton
-              aria-label="Edit"
-              onClick={(e) => {
-                setEdit(true);
-              }}
-            >
+            <IconButton aria-label="Edit" onClick={handleEdit}>
               <EditIcon data-key={note.id} />
             </IconButton>
             <IconButton aria-label="Delete" onClick={(e) => deleteNote(e)}>

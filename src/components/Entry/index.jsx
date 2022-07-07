@@ -18,6 +18,7 @@ const Entry = () => {
   const [text, setText] = useState("");
   const [notes, setNotes] = useState([]);
   const [disable, setDisable] = useState(false);
+  const [activeNoteId, setActiveNoteId] = useState(-1);
   const [time, setTime] = useState(parseTimeForTextField(new Date(), false));
   const notesCollectionRef = collection(db, "notes");
 
@@ -31,6 +32,7 @@ const Entry = () => {
     const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
       const notes = [];
       snapshot.docs.forEach((doc) => {
+        console.log("NOTE: ", doc.data().text);
         notes.push({ ...doc.data(), id: doc.id });
       });
 
@@ -110,7 +112,13 @@ const Entry = () => {
         {notes.length > 0 && (
           <>
             {notes.map((note) => {
-              return <Note note={note} />;
+              return (
+                <Note
+                  key={note.id}
+                  note={note}
+                  activeNoteId={{ get: activeNoteId, set: setActiveNoteId }}
+                />
+              );
             })}
           </>
         )}
