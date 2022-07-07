@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
-import { Grid, Paper, TextField, Button } from "@mui/material";
+import { Grid, Paper, TextField, Button, Typography } from "@mui/material";
 
-const SignupForm = () => {
+const SignupForm = ({ hasAccount }) => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
 
   const createUser = async (e) => {
     if (signupEmail.length && signupPassword.length) {
       await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
     }
-  };
-
-  const login = async (e) => {
-    await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
   };
 
   return (
@@ -32,6 +23,7 @@ const SignupForm = () => {
         alignItems={"center"}
         mt={3}
       >
+        <Typography variant="h1">Sign Up</Typography>
         <Grid item xs={12}>
           <TextField
             label="Email"
@@ -57,36 +49,9 @@ const SignupForm = () => {
             Sign Up
           </Button>
         </Grid>
-      </Grid>
-
-      <Grid
-        container
-        spacing={3}
-        direction={"column"}
-        justify={"center"}
-        alignItems={"center"}
-        mt={3}
-      >
         <Grid item xs={12}>
-          <TextField
-            label="Email"
-            type={"email"}
-            value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Password"
-            type={"password"}
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant={"contained"} fullWidth onClick={(e) => login(e)}>
-            Login
-          </Button>
+          <Typography variant="p">Already have an account?</Typography>
+          <Button onClick={(e) => hasAccount.set(true)}>Login</Button>
         </Grid>
       </Grid>
     </Paper>
