@@ -11,7 +11,7 @@ const LoginForm = ({ hasAccount }) => {
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
   };
   return (
-    <Paper>
+    <>
       <Grid
         container
         spacing={3}
@@ -47,7 +47,7 @@ const LoginForm = ({ hasAccount }) => {
           <Button onClick={(e) => hasAccount.set(false)}>Sign up</Button>
         </Grid>
       </Grid>
-    </Paper>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { Grid, Paper, TextField, Button, Typography } from "@mui/material";
@@ -14,7 +14,7 @@ const SignupForm = ({ hasAccount }) => {
   };
 
   return (
-    <Paper>
+    <>
       <Grid
         container
         spacing={3}
@@ -54,7 +54,7 @@ const SignupForm = ({ hasAccount }) => {
           <Button onClick={(e) => hasAccount.set(true)}>Login</Button>
         </Grid>
       </Grid>
-    </Paper>
+    </>
   );
 };
 
