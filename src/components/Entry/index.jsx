@@ -12,33 +12,12 @@ import {
   orderBy,
 } from "firebase/firestore";
 import parseTimeForTextField from "../../_utils/parseTimeForTextField";
-import Note from "../Note";
 
 const Entry = () => {
   const [text, setText] = useState("");
-  const [notes, setNotes] = useState([]);
   const [disable, setDisable] = useState(false);
-  const [activeNoteId, setActiveNoteId] = useState(-1);
   const [time, setTime] = useState(parseTimeForTextField(new Date(), false));
   const notesCollectionRef = collection(db, "notes");
-
-  const notesQuery = query(
-    notesCollectionRef,
-    orderBy("dueTime", "asc"),
-    where("createdBy", "==", auth.currentUser.uid)
-  );
-
-  useEffect(() => {
-    const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
-      const notes = [];
-      snapshot.docs.forEach((doc) => {
-        console.log("NOTE: ", doc.data().text);
-        notes.push({ ...doc.data(), id: doc.id });
-      });
-
-      setNotes(notes);
-    });
-  }, []);
 
   const handleChange = (e) => {
     setTime(e.target.value);
@@ -66,16 +45,9 @@ const Entry = () => {
     await setDisable(false);
   };
 
-  const logout = async (e) => {
-    await signOut(auth);
-  };
-
   return (
-    <Stack spacing={2} alignItems={"center"}>
-      <Button variant={"outlined"} onClick={(e) => logout(e)}>
-        Logout
-      </Button>
-      <Stack direction={"row"} justifyContent={"center"}>
+    <>
+      <Stack direction={"row"} spacing={1} justifyContent={"center"}>
         <TextField
           label="Reminder"
           value={text}
@@ -107,23 +79,7 @@ const Entry = () => {
           Submit
         </Button>
       </Stack>
-
-      <Paper>
-        {notes.length > 0 && (
-          <>
-            {notes.map((note) => {
-              return (
-                <Note
-                  key={note.id}
-                  note={note}
-                  activeNoteId={{ get: activeNoteId, set: setActiveNoteId }}
-                />
-              );
-            })}
-          </>
-        )}
-      </Paper>
-    </Stack>
+    </>
   );
 };
 

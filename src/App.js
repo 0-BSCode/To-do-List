@@ -4,7 +4,7 @@ import SignupForm from "./components/Signup";
 import LoginForm from "./components/Login";
 import Entry from "./components/Entry";
 import { useState, useEffect } from "react";
-import { Button } from "@mui/material";
+import Home from "./components/Home";
 
 function App() {
   // Could use auth.currentUser but that won't cause re-render
@@ -23,7 +23,7 @@ function App() {
     <SignupForm hasAccount={{ get: hasAccount, set: setHasAccount }} />
   );
 
-  return <>{user ? <Entry /> : form}</>;
+  return <>{user ? <Home /> : form}</>;
 }
 
 export default App;

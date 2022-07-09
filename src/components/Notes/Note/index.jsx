@@ -9,11 +9,11 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import parseTimeForTextField from "../../_utils/parseTimeForTextField";
+import parseTimeForTextField from "../../../_utils/parseTimeForTextField";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { db } from "../../firebase-config";
+import { db } from "../../../firebase-config";
 
 const Note = ({ note, activeNoteId }) => {
   const [text, setText] = useState(note.text);
