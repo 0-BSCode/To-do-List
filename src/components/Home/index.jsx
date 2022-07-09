@@ -9,8 +9,9 @@ import {
   orderBy,
   where,
   onSnapshot,
+  getDocs,
 } from "firebase/firestore";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 const Home = () => {
   const [notes, setNotes] = useState([]);
@@ -20,8 +21,8 @@ const Home = () => {
 
   const notesQuery = query(
     notesCollectionRef,
-    orderBy("dueTime", "asc"),
-    where("createdBy", "==", auth.currentUser.uid)
+    where("createdBy", "==", auth.currentUser.uid),
+    orderBy("createdAt", "desc")
   );
 
   useEffect(() => {
@@ -39,10 +40,14 @@ const Home = () => {
     <Stack spacing={2} alignItems={"center"} sx={{ m: 3 }}>
       <Logout />
       <Entry />
-      <Notes
-        notes={notes}
-        activeNoteId={{ get: activeNoteId, set: setActiveNoteId }}
-      />
+      {notes.length > 0 ? (
+        <Notes
+          notes={notes}
+          activeNoteId={{ get: activeNoteId, set: setActiveNoteId }}
+        />
+      ) : (
+        <Typography variant="p">No tasks for now.</Typography>
+      )}
     </Stack>
   );
 };

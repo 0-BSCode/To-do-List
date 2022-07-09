@@ -11,25 +11,14 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-import parseTimeForTextField from "../../_utils/parseTimeForTextField";
 
 const Entry = () => {
   const [text, setText] = useState("");
   const [disable, setDisable] = useState(false);
-  const [time, setTime] = useState(parseTimeForTextField(new Date(), false));
   const notesCollectionRef = collection(db, "notes");
-
-  const handleChange = (e) => {
-    setTime(e.target.value);
-  };
 
   const saveText = async (e) => {
     e.preventDefault();
-
-    const [hours, minutes] = time.split(":");
-    const d = new Date();
-    d.setHours(hours);
-    d.setMinutes(minutes);
 
     await setDisable(true);
     if (text !== "") {
@@ -37,8 +26,7 @@ const Entry = () => {
         text,
         createdAt: serverTimestamp(),
         createdBy: auth.currentUser.uid,
-        dueTime: d,
-        displayTime: parseTimeForTextField(d, true),
+        finished: false,
       });
       setText("");
     }
@@ -54,21 +42,6 @@ const Entry = () => {
           onChange={(e) => {
             setText(e.target.value);
           }}
-        />
-
-        <TextField
-          id="time"
-          label="Time"
-          type="time"
-          value={time}
-          onChange={(e) => handleChange(e)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          inputProps={{
-            step: 300, // 5 min
-          }}
-          sx={{ width: 150 }}
         />
         <Button
           alignSelf={"center"}
