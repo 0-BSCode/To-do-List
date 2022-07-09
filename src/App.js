@@ -2,7 +2,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase-config";
 import SignupForm from "./components/Signup";
 import LoginForm from "./components/Login";
-import Entry from "./components/Entry";
 import { useState, useEffect } from "react";
 import Home from "./components/Home";
 

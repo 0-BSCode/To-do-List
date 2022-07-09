@@ -9,7 +9,6 @@ import {
   orderBy,
   where,
   onSnapshot,
-  getDocs,
 } from "firebase/firestore";
 import { Stack, Typography } from "@mui/material";
 
@@ -26,7 +25,7 @@ const Home = () => {
   );
 
   useEffect(() => {
-    const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
+    onSnapshot(notesQuery, (snapshot) => {
       const notes = [];
       snapshot.docs.forEach((doc) => {
         notes.push({ ...doc.data(), id: doc.id });

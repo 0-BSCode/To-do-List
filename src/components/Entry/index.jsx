@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Button, Stack, Paper } from "@mui/material";
+import React, { useState } from "react";
+import { TextField, Button, Stack } from "@mui/material";
 import { db, auth } from "../../firebase-config";
-import { signOut } from "firebase/auth";
 import {
   collection,
   addDoc,
   serverTimestamp,
-  where,
-  onSnapshot,
-  query,
   doc,
   deleteDoc,
 } from "firebase/firestore";
