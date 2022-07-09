@@ -39,7 +39,7 @@ const Home = () => {
   return (
     <Stack spacing={2} alignItems={"center"} sx={{ m: 3 }}>
       <Logout />
-      <Entry />
+      <Entry notes={notes} />
       {notes.length > 0 ? (
         <Notes
           notes={notes}

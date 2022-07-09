@@ -9,10 +9,11 @@ import {
   where,
   onSnapshot,
   query,
-  orderBy,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 
-const Entry = () => {
+const Entry = ({ notes }) => {
   const [text, setText] = useState("");
   const [disable, setDisable] = useState(false);
   const notesCollectionRef = collection(db, "notes");
@@ -33,6 +34,15 @@ const Entry = () => {
     await setDisable(false);
   };
 
+  const clearFinished = async (e) => {
+    notes.forEach(async (note) => {
+      if (note.finished) {
+        const docRef = doc(db, "notes", note.id);
+        await deleteDoc(docRef);
+      }
+    });
+  };
+
   return (
     <>
       <Stack direction={"row"} spacing={1} justifyContent={"center"}>
@@ -44,12 +54,18 @@ const Entry = () => {
           }}
         />
         <Button
-          alignSelf={"center"}
           disabled={disable}
           variant={"contained"}
           onClick={(e) => saveText(e)}
         >
           Submit
+        </Button>
+        <Button
+          color={"secondary"}
+          variant={"outlined"}
+          onClick={(e) => clearFinished(e)}
+        >
+          Clear Finished
         </Button>
       </Stack>
     </>
